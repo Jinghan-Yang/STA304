@@ -1,1 +1,3 @@
-# STA304
+# About
+
+This is a website of mine.
