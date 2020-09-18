@@ -65,9 +65,8 @@ bike1 <- bike %>%
 
 # Including Plots
 
-You can also embed plots. See Figure \@ref(fig:pie) for example:
 
-```{r}
+```{r bar, fig.cap=" A fancy bar chart", tidy=FALSE}
 ggplot(data=bike1, aes(x=reorder(Neighbourhood,-count), y=count, fill=count)) +
     geom_bar(colour="black", stat="identity") +
      theme(text = element_text(size=8),
