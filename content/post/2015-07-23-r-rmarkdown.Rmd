@@ -1,5 +1,5 @@
 ---
-title: "Introduction"
+title: "Save your bike and avoid biking in the downtown area of Toronto"
 author: "Jinghan Yang"
 date: 2015-07-23T21:13:14-05:00
 bibliography: "references.bib"
@@ -9,9 +9,41 @@ tags: ["R Markdown", "plot", "regression"]
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(collapse = TRUE)
+install.packages("tidyverse")
+library(tidyverse)
+install.packages("dplyr")
+library(dplyr)
 ```
+
+```{r}
+install.packages("tibble")
+library(tibble)
+```
+
+```{r}
+install.packages("opendatatoronto")
+library(opendatatoronto)
+
+
+# get package
+package <- show_package("c7d34d9b-23d2-44fe-8b3b-cd82c8b38978")
+package
+
+# get all resources for this package
+resources <- list_package_resources("c7d34d9b-23d2-44fe-8b3b-cd82c8b38978")
+
+# identify datastore resources; by default, Toronto Open Data sets datastore resource format to CSV for non-geospatial and GeoJSON for geospatial resources
+datastore_resources <- filter(resources, tolower(format) %in% c('csv', 'geojson'))
+
+# load the first datastore resource as a sample
+data <- filter(datastore_resources, row_number()==1) %>% get_resource()
+data
+
+```
+
 # Abstract
-My abstract
+My abstract 
+
 
 
 # Introduction
@@ -21,23 +53,27 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 You can embed an R code chunk like this:
 
 ```{r cars}
-summary(cars)
-fit <- lm(dist ~ speed, data = cars)
-fit
+bike <- data
+```
+```{r}
+bike1 <- bike %>%
+    group_by(Neighbourhood) %>%
+    summarise(count = n()) %>%
+    top_n(n = 10, wt = count)%>%
+    arrange(desc(count))
 ```
 
 # Including Plots
 
 You can also embed plots. See Figure \@ref(fig:pie) for example:
 
-```{r pie, fig.cap='A fancy pie chart.', tidy=FALSE}
-par(mar = c(0, 1, 0, 1))
-pie(
-  c(280, 60, 20),
-  c('Sky', 'Sunny side of pyramid', 'Shady side of pyramid'),
-  col = c('#0292D8', '#F7EA39', '#C4B632'),
-  init.angle = -50, border = NA
-)
+```{r}
+ggplot(data=bike1, aes(x=reorder(Neighbourhood,-count), y=count, fill=count)) +
+    geom_bar(colour="black", stat="identity") +
+     theme(text = element_text(size=8),
+        axis.text.x = element_text(angle=90, hjust=1))
+ 
+
 ```
 
 # References
